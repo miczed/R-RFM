@@ -1,0 +1,24 @@
+library(data.table)
+library(lubridate)
+library(ggplot2)
+library(Hmisc)
+
+# load the RFM package
+library(RFM)
+
+setwd("~/dev/R")
+
+# Read in the data transactions.csv. ####
+transactions <- data.table::fread("data/transactions.csv")
+
+#Check the data format
+str(transactions)
+
+#date in POSIXct format. ####
+transactions[, TransDate:=dmy(TransDate)]
+
+score <- calculateRFM(transactions, 20, 20, 60)
+
+# show the results in the console
+score
+table(score$group)

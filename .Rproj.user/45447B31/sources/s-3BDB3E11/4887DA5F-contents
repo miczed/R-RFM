@@ -1,0 +1,18 @@
+# 1a Set your working directory.
+setwd("data")
+
+# 1b install and load packages
+library(data.table) # load data table package
+library(lubridate)
+library(Hmisc)
+
+# 1c load the data
+trans <- data.table::fread("transactions.csv")
+
+# 1d transform the column
+trans[,TransDate := dmy(TransDate)]
+
+# 2a Store the date of the overall latest transaction in a new object in your R environment.
+latestTransaction <- max(trans[,TransDate])
+
+rfm <- trans[,Recency := lubridate::time_length(latestTransaction-max(TransDate),unit="days"),by="Customer"]

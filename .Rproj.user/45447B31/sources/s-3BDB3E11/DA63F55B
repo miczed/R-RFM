@@ -1,0 +1,26 @@
+{
+    "id": "DA63F55B",
+    "path": "~/dev/R/day3/roxygen_template.r",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1612953541732.0,
+    "source_on_save": false,
+    "relative_order": 11,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "24,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1612953529,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1612953529,
+    "read_only": false,
+    "read_only_alternatives": []
+}

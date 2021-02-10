@@ -1,0 +1,81 @@
+library(data.table) # load data table package
+library(lubridate)
+
+# 01 Select
+DT <- data.table::fread("data/transactions.csv")
+DT[,TransDate] <- lapply(DT[,TransDate], lubridate::as_datetime)
+s <- DT[PurchAmount > 100 & PurchAmount < 200, list(Customer,Cost)]
+
+# 02 Aggregate
+DT[, AggPurch := sum(PurchAmount), by=list(Customer,TransDate)]
+DT[, Count := .N, by=Customer]
+DT[, LeadQuantity := shift(Quantity,1, type="lead"), by=list(Customer,TransID)]
+max <- DT[, max(LeadQuantity,na.rm = TRUE)]
+
+# 03 Merge
+dm <- data.table::fread("data/demographics.csv")
+dm[,Birthdate := dmy(Birthdate)]
+
+m1 <- merge(DT,dm, by="Customer", all.x=TRUE)
+
+m2 <- merge(DT,dm[year(Birthdate) > 1980], by="Customer")
+
+# 04 Conditions
+trans <- data.table::fread("data/transactions.csv")
+# make sure to use correctly: ymd or dmy
+trans[,TransDate := dmy(TransDate)]
+
+maxDate <- max(trans$TransDate)
+sumLastMonth <- trans[TransDate>dmy("30-11-2012",tz="UTC"),sum(PurchAmount)]
+sumLastMonth2 <- sum(trans[TransDate>ymd("2012-11-30", tz="UTC"), PurchAmount])
+
+if(sumLastMonth < 30000) {
+  print("start campaign")
+} else if (sumLastMonth < 45000) {
+  print("start different campaign")
+} else {
+  print("do nothing")
+}
+
+# 05 Loops
+trans <- data.table::fread("data/transactions.csv")
+s <- 0
+for(t in trans[,PurchAmount]) {
+  s <- s + t
+  if(s > 1000000) {
+   break 
+  }
+}
+# alternative
+s <- 0
+i <- 0
+while(s<1000000) {
+  i<- i+1
+  s <- s + trans[i, PurchAmount]
+}
+
+# alternative using vectorization without loops
+trans[, CumPurch:=cumsum(PurchAmount)]
+i <- nrow(transactions[CumPurch<1000000,])
+print(transactions[i, TransDate])
+
+# 06 Functions
+divide <- function(a,divisor) {
+  if(divisor == 0) {
+    return(NULL)
+  }
+  return(a / divisor)
+}
+divide(20,4)
+divide(20,0)
+
+rollDice <- function(prob=NULL) {
+  dice1 = sample(1:6,size=1,prob=prob)
+  dice2 = sample(1:6,size=1,prob=prob)
+  return(dice1+dice2)
+}
+
+rollDice()
+rollDice(c(0,0,0,0,0,1))
+
+# 07 Scoring Model
